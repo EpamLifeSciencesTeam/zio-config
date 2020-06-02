@@ -50,10 +50,16 @@ addCommandAlias("fmt", "; scalafmtSbt; scalafmt; test:scalafmt")
 addCommandAlias("check", "; scalafmtSbtCheck; scalafmtCheck; test:scalafmtCheck")
 addCommandAlias(
   "checkAll",
-  "; ++2.11.12; project root2-11; check; ++2.12.11; project root2-12; check; ++2.13.2; project root2-13; check"
+  "; ++2.11.12; project root2-11; check; ++2.12.11; project root2-12; check; ++2.13.2!; project root2-13; check; ++0.23.0-RC1!; project rootDotty; check"
 )
-addCommandAlias("compileAll", "; ++2.11.12; root2-11/compile; ++2.12.11; root2-12/compile; ++2.13.2!; root2-13/compile")
-addCommandAlias("testAll", "; ++2.11.12; root2-11/test; ++2.12.11; root2-12/test; ++2.13.2!; root2-13/test")
+addCommandAlias(
+  "compileAll",
+  "; ++2.11.12; root2-11/compile; ++2.12.11; root2-12/compile; ++2.13.2!; root2-13/compile; ++0.23.0-RC1!; rootDotty/compile"
+)
+addCommandAlias(
+  "testAll",
+  "; ++2.11.12; root2-11/test; ++2.12.11; root2-12/test; ++2.13.2!; root2-13/test; ++0.23.0-RC1!; rootDotty/test"
+)
 
 lazy val zioVersion       = "1.0.0-RC20"
 lazy val magnoliaVersion  = "0.16.0"
@@ -83,7 +89,8 @@ lazy val scala212projects = scala211projects ++ Seq[ProjectReference](
   examples,
   zioConfigTypesafeMagnoliaTests
 )
-lazy val scala213projects = scala212projects
+lazy val scala213projects   = scala212projects
+lazy val scalaDottyProjects = scala212projects
 
 lazy val root =
   project
@@ -108,6 +115,12 @@ lazy val `root2-13` =
     .in(file("2-13"))
     .settings(skip in publish := true)
     .aggregate(scala213projects: _*)
+
+lazy val `rootDotty` =
+  project
+    .in(file("dotty"))
+    .settings(skip in publish := true)
+    .aggregate(scalaDottyProjects: _*)
 
 lazy val zioConfig =
   module("zio-config", "core")

@@ -12,6 +12,10 @@ scala_213: &scala_213
   SCALA_VERSION: 2.13.2
   ROOT_PROJECT: root2-13
 
+scala_dotty: &scala_dotty
+  SCALA_VERSION: 0.23.0-RC1
+  ROOT_PROJECT: rootDotty
+
 jdk_8: &jdk_8
   JDK_VERSION: 8
 
@@ -67,10 +71,10 @@ save_cache: &save_cache
   - save_cache:
       key: sbt-cache-zio-config
       paths:
-          - "~/.ivy2/cache"
-          - "~/.sbt"
-          - "~/.m2"
-          - "~/website/node_modules"
+        - "~/.ivy2/cache"
+        - "~/.sbt"
+        - "~/.m2"
+        - "~/website/node_modules"
 
 install_yarn: &install_yarn
   - run:
@@ -139,25 +143,35 @@ testJVM: &testJVM
     - store_test_results:
         path: core-tests/jvm/target/test-reports
 
+testJVMDotty: &testJVMDotty
+  steps:
+    - checkout
+    - <<: *load_cache
+    - run:
+        name: Run tests
+        command: ./sbt ++${SCALA_VERSION}! ${ROOT_PROJECT}/test
+    - <<: *clean_cache
+    - <<: *save_cache
+
 release: &release
   steps:
-      - checkout
-      - run:
-          name: Fetch git tags
-          command: git fetch --tags
-      - <<: *load_cache
-      - run: 
-          name: Write sonatype credentials
-          command: echo "credentials += Credentials(\"Sonatype Nexus Repository Manager\", \"oss.sonatype.org\", \"${SONATYPE_USER}\", \"${SONATYPE_PASSWORD}\")" > ~/.sbt/1.0/sonatype.sbt
-      - run:
-          name: Write PGP public key
-          command: echo -n "${PGP_PUBLIC}" | base64 -d > /tmp/public.asc
-      - run:
-          name: Write PGP secret key
-          command: echo -n "${PGP_SECRET}" | base64 -d > /tmp/secret.asc
-      - run:
-          name: Release artifacts
-          command: ./sbt clean sonatypeBundleClean ++2.11.12 root2-11/publishSigned ++2.12.11 root2-12/publishSigned ++2.13.2! root2-13/publishSigned sonatypeBundleRelease
+    - checkout
+    - run:
+        name: Fetch git tags
+        command: git fetch --tags
+    - <<: *load_cache
+    - run:
+        name: Write sonatype credentials
+        command: echo "credentials += Credentials(\"Sonatype Nexus Repository Manager\", \"oss.sonatype.org\", \"${SONATYPE_USER}\", \"${SONATYPE_PASSWORD}\")" > ~/.sbt/1.0/sonatype.sbt
+    - run:
+        name: Write PGP public key
+        command: echo -n "${PGP_PUBLIC}" | base64 -d > /tmp/public.asc
+    - run:
+        name: Write PGP secret key
+        command: echo -n "${PGP_SECRET}" | base64 -d > /tmp/secret.asc
+    - run:
+        name: Release artifacts
+        command: ./sbt clean sonatypeBundleClean ++2.11.12 root2-11/publishSigned ++2.12.11 root2-12/publishSigned ++2.13.2! root2-13/publishSigned ++0.23.0-RC1! rootDotty/publishSigned sonatypeBundleRelease
 
 microsite: &microsite
   steps:
@@ -225,6 +239,14 @@ jobs:
       - <<: *scala_213
       - <<: *jdk_8
 
+  test_dotty_jdk8_jvm:
+    <<: *testJVMDotty
+    <<: *machine_ubuntu
+    <<: *machine_resource
+    environment:
+      - <<: *scala_dotty
+      - <<: *jdk_8
+
   test_212_jdk11_jvm:
     <<: *testJVM
     <<: *machine_ubuntu
@@ -279,6 +301,12 @@ workflows:
           filters:
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - test_dotty_jdk8_jvm:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       - test_212_jdk11_jvm:
           requires:
             - lint
@@ -292,6 +320,7 @@ workflows:
             - test_212_jdk8_jvm
             - test_212_jdk11_jvm
             - test_213_jdk8_jvm
+            - test_dotty_jdk8_jvm
             - mdoc
           filters:
             branches:
@@ -308,4 +337,3 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-
