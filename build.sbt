@@ -90,7 +90,7 @@ lazy val scala212projects = scala211projects ++ Seq[ProjectReference](
   zioConfigTypesafeMagnoliaTests
 )
 lazy val scala213projects   = scala212projects
-lazy val scalaDottyProjects = scala212projects
+lazy val scalaDottyProjects = scala211projects
 
 lazy val root =
   project

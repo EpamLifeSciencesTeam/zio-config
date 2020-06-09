@@ -1,9 +1,9 @@
 import sbt._
 import Keys._
-
 import explicitdeps.ExplicitDepsPlugin.autoImport._
 import sbtbuildinfo._
 import BuildInfoKeys._
+import dotty.tools.sbtplugin.DottyPlugin.autoImport._
 
 object BuildHelper {
 
@@ -80,9 +80,16 @@ object BuildHelper {
     scalaVersion in ThisBuild := crossScalaVersions.value.head,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
     libraryDependencies ++= compileOnlyDeps ++ testDeps ++ Seq(
-      compilerPlugin("org.typelevel"   %% "kind-projector"  % "0.10.3"),
-      compilerPlugin("com.github.ghik" %% "silencer-plugin" % "1.7.0" cross CrossVersion.full)
-    ),
+      compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
+    ) ++ {
+      if (isDotty.value)
+        Seq(("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0" % Provided).withDottyCompat(scalaVersion.value))
+      else
+        Seq(
+          "com.github.ghik" % "silencer-lib" % "1.7.0" % Provided cross CrossVersion.full,
+          compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.0" cross CrossVersion.full)
+        )
+    },
     parallelExecution in Test := true,
     incOptions ~= (_.withLogRecompileOnMacro(false)),
     autoAPIMappings := true,
