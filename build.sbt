@@ -231,8 +231,7 @@ def module(moduleName: String, fileName: String): Project =
     .settings(stdSettings(moduleName))
     .settings(
       libraryDependencies ++= Seq(
-        "dev.zio"        %% "zio"        % zioVersion,
-        "org.scalacheck" %% "scalacheck" % "1.14.3"
+        "dev.zio" %% "zio" % zioVersion
       )
     )
 

@@ -88,7 +88,7 @@ object BuildHelper {
         Seq(
           "com.github.ghik" % "silencer-lib" % "1.7.0" % Provided cross CrossVersion.full,
           compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.0" cross CrossVersion.full)
-        )
+        ) ++ testDeps
     },
     parallelExecution in Test := true,
     incOptions ~= (_.withLogRecompileOnMacro(false)),
