@@ -81,7 +81,11 @@ object BuildHelper {
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
     libraryDependencies ++= {
       if (isDotty.value)
-        Seq(("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0" % Provided).withDottyCompat(scalaVersion.value))
+        Seq(
+          ("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0" % Provided).withDottyCompat(scalaVersion.value),
+          "org.scalacheck" %% "scalacheck_2.13.2" % "1.14.3" % Test,
+          compilerPlugin("org.typelevel" %% "kind-projector__2.13.0-RC1" % "0.10.3")
+        )
       else
         Seq(
           "com.github.ghik" % "silencer-lib" % "1.7.0" % Provided cross CrossVersion.full,
