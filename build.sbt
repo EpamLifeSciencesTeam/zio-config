@@ -192,10 +192,8 @@ lazy val zioConfigMagnolia = module("zio-config-magnolia", "magnolia")
 lazy val zioConfigShapeless = module("zio-config-shapeless", "shapeless")
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"        %% "zio-test"     % zioVersion % Test,
-      "dev.zio"        %% "zio-test-sbt" % zioVersion % Test,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "com.chuusai"    %% "shapeless"    % shapelessVersion
+      "dev.zio" %% "zio-test"     % zioVersion % Test,
+      "dev.zio" %% "zio-test-sbt" % zioVersion % Test
     ),
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )

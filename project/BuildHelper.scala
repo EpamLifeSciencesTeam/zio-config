@@ -82,15 +82,19 @@ object BuildHelper {
     libraryDependencies ++= {
       if (isDotty.value)
         Seq(
-          ("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0" % Provided).withDottyCompat(scalaVersion.value),
-          "org.scalacheck" %% "scalacheck_2.13.2" % "1.14.3" % Test,
-          compilerPlugin("org.typelevel" %% "kind-projector__2.13.2" % "0.10.3")
+          ("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0"  % Provided).withDottyCompat(scalaVersion.value),
+          ("org.scalacheck"  %% "scalacheck"         % "1.14.3" % Test).withDottyCompat(scalaVersion.value),
+          compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3").withDottyCompat(scalaVersion.value),
+          ("com.chuusai" %% "shapeless" % "2.4.0-M1").withDottyCompat(scalaVersion.value),
+          "org.scala-lang" % "scala-reflect" % "2.13.2"
         )
       else
         Seq(
           "com.github.ghik" % "silencer-lib" % "1.7.0" % Provided cross CrossVersion.full,
           compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.0" cross CrossVersion.full),
-          compilerPlugin("org.typelevel"   %% "kind-projector" % "0.10.3")
+          compilerPlugin("org.typelevel"   %% "kind-projector" % "0.10.3"),
+          "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+          "com.chuusai"    %% "shapeless"    % "2.4.0-M1"
         ) ++ testDeps
     },
     parallelExecution in Test := true,
