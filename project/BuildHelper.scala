@@ -79,14 +79,17 @@ object BuildHelper {
     crossScalaVersions := Seq("2.13.2", "2.12.11", "2.11.12"),
     scalaVersion in ThisBuild := crossScalaVersions.value.head,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
-    libraryDependencies ++= {
+    libraryDependencies ++= testDeps ++ Seq(
+      compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
+    ) ++ {
       if (isDotty.value)
         Seq(("com.github.ghik" % "silencer-lib_2.13.2" % "1.7.0" % Provided).withDottyCompat(scalaVersion.value))
       else
-        compileOnlyDeps
-    } ++ testDeps ++ Seq(
-      compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
-    ),
+        Seq(
+          "com.github.ghik" % "silencer-lib" % "1.7.0" % Provided cross CrossVersion.full,
+          compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.0" cross CrossVersion.full)
+        )
+    },
     parallelExecution in Test := true,
     incOptions ~= (_.withLogRecompileOnMacro(false)),
     autoAPIMappings := true,
