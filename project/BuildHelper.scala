@@ -79,7 +79,7 @@ object BuildHelper {
     crossScalaVersions := Seq("2.13.2", "2.12.11", "2.11.12"),
     scalaVersion in ThisBuild := crossScalaVersions.value.head,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
-    libraryDependencies ++= testDeps ++ Seq(
+    libraryDependencies ++= Seq(
       compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
     ) ++ {
       if (isDotty.value)
