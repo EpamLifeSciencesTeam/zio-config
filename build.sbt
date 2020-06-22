@@ -132,7 +132,9 @@ lazy val zioConfig =
         "dev.zio" %% "zio-test-sbt" % zioVersion % Test
       ),
       testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
-      scalacOptions += { if (!isDotty.value) "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._" }
+      scalacOptions += {
+        if (!isDotty.value) "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._" else Seq.empty
+      }
     )
 
 lazy val zioConfigRefined =
