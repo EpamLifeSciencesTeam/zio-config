@@ -102,8 +102,7 @@ lazy val `root2-11` =
   project
     .in(file("2-11"))
     .settings(
-      skip in publish := true,
-      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+      skip in publish := true
     )
     .aggregate(scala211projects: _*)
 
@@ -111,8 +110,7 @@ lazy val `root2-12` =
   project
     .in(file("2-12"))
     .settings(
-      skip in publish := true,
-      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+      skip in publish := true
     )
     .aggregate(scala212projects: _*)
 
@@ -120,8 +118,7 @@ lazy val `root2-13` =
   project
     .in(file("2-13"))
     .settings(
-      skip in publish := true,
-      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+      skip in publish := true
     )
     .aggregate(scala213projects: _*)
 
