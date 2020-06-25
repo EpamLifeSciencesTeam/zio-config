@@ -1,3 +1,3 @@
 package zio.config
 
-private[config] object VersionSpecificSupport {}
+private[config] trait VersionSpecificSupport {}

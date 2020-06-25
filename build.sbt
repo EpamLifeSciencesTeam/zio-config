@@ -101,19 +101,28 @@ lazy val root =
 lazy val `root2-11` =
   project
     .in(file("2-11"))
-    .settings(skip in publish := true)
+    .settings(
+      skip in publish := true,
+      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+    )
     .aggregate(scala211projects: _*)
 
 lazy val `root2-12` =
   project
     .in(file("2-12"))
-    .settings(skip in publish := true)
+    .settings(
+      skip in publish := true,
+      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+    )
     .aggregate(scala212projects: _*)
 
 lazy val `root2-13` =
   project
     .in(file("2-13"))
-    .settings(skip in publish := true)
+    .settings(
+      skip in publish := true,
+      scalacOptions += "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._"
+    )
     .aggregate(scala213projects: _*)
 
 lazy val `rootDotty` =
@@ -131,10 +140,7 @@ lazy val zioConfig =
         "dev.zio" %% "zio-test"     % zioVersion % Test,
         "dev.zio" %% "zio-test-sbt" % zioVersion % Test
       ),
-      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
-      scalacOptions += {
-        if (!isDotty.value) "-P:silencer:lineContentFilters=import VersionSpecificSupport\\._" else Seq.empty
-      }
+      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
     )
 
 lazy val zioConfigRefined =
